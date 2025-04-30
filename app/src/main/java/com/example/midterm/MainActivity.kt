@@ -22,20 +22,29 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 import com.example.midterm.ui.theme.MidTermTheme
-import androidx.compose.animation.core.animateFloatAsState
+import android.app.Application
+import com.example.midterm.di.appModule
+import com.example.midterm.di.dataModule
+import com.example.midterm.di.databaseModule
+import com.example.midterm.di.domainModule
+import com.example.midterm.di.presentationModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
 
-
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            MidTermTheme {
-                val navController = rememberNavController()
-                NavHost(navController, startDestination = "firstScreen") {
-                    composable("firstScreen") { FirstScreen(navController)}
-                    composable("secondScreen") { SecondScreen() }
-                }
-            }
+class MainActivity : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        startKoin {
+            androidContext(this@MainActivity)
+            androidLogger()
+            modules( listOf (
+                appModule,
+                databaseModule,
+                dataModule,
+                domainModule,
+                presentationModule
+            ))
         }
     }
 }
@@ -89,7 +98,6 @@ fun SecondScreen() {
         )
     }
 }
-
 @Preview(showBackground = true)
 @Composable
 fun PreviewScreen() {
